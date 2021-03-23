@@ -135,3 +135,51 @@ if (isset($_SESSION['id'])) {
 
      mysqli_close($conn);
  }
+
+
+
+ if(isset($_POST['attendance'])){
+    
+
+    $student_id = $_POST['id'];
+    $in_or_out = $_POST['type'];
+     if( checkIfSignedInOrOut($in_or_out)){ echo "you have $in_or_out for today"; die();}
+    $today = date("Y-m-d");
+    $sign_in =  date("Y-m-d H:i:s");
+    $sign_out =  date("Y-m-d H:i:s");
+    $sql = ($in_or_out == "signin") ? "INSERT INTO attendance (student_id, sign_in, sign_out) VALUES('$student_id', '$sign_in', null)" :"UPDATE attendance SET sign_out = '$sign_out' WHERE student_id ='$student_id' AND `sign_in`LIKE '%$today%'"; ;
+    $result = mysqli_query($conn, $sql);
+    print_r($result);
+
+}
+
+
+
+
+function checkIfSignedInOrOut($type){
+    global $conn;
+  if($type == "signin"){
+      $today = date("Y-m-d");
+      $sql = "SELECT * FROM `attendance` WHERE `sign_in`LIKE '%$today%'";
+
+
+      $result = mysqli_query($conn, $sql);
+      if(mysqli_num_rows($result) > 0){
+          return true;
+      }else{
+          return false;
+      }
+  }else if($type == "signout"){
+    $today = date("Y-m-d");
+    $sql = "SELECT * FROM `attendance` WHERE `sign_out` LIKE '%$today%'";
+
+    $result = mysqli_query($conn, $sql);
+    if(mysqli_num_rows($result) > 0){
+        return true;
+    }else{
+        return false;
+    }
+  }else{
+      return false;
+  }
+}

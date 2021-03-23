@@ -10,7 +10,7 @@
 </script>
 
 <script src="<?=JAVASCRIPT_PATH?>form.js"></script>
-<script src="<?=JAVASCRIPT_PATH?>app.js"></script>
+<!-- <script src="<?=JAVASCRIPT_PATH?>app.js"></script> -->
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>
   AOS.init({

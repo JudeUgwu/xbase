@@ -1,6 +1,7 @@
 $(document).ready(function(){
    $(".process_form").submit(processForm);
    $(".__search").submit(processSearch);
+  //  $(".authenticate").click(AuthenticateStudent);
 })
 
 
@@ -73,7 +74,18 @@ function processSearch(event){
             if($response.data.length > 0){
               $("ul.student_found").empty()
               $.each($response.data,function(index,student){
-                 $("ul.student_found").append($("<li>").addClass("list-group-item").html(`${student.firstname}  ${student.lastname}`).append($("<a>").addClass("btn btn-success d-inline mr-3 ml-2").html("check in")).append($("<a>").addClass("btn btn-danger d-inline mr-3 ml-2").html("check out")));
+                 $("ul.student_found").append(
+                   $("<li>").addClass("list-group-item").html(`${student.firstname}  ${student.lastname}`)
+                   .append($("<a>").addClass("btn btn-success d-inline mr-3 ml-2 authenticate").attr({
+                     "data-type":"signin",
+                     "data-user-id":student.id,
+                     "data-student-username":student.username
+                   }).html("check in").click(AuthenticateStudent))
+                     .append($("<a>").addClass("btn btn-danger d-inline mr-3 ml-2 authenticate").attr({
+                      "data-type":"signout",
+                      "data-user-id":student.id,
+                      "data-student-username":student.username
+                     }).html("check out").click(AuthenticateStudent)));
               })
               $('#searchModal').modal('show');
             }
@@ -87,5 +99,30 @@ function processSearch(event){
   }else{
     alert("Please enter data")
   }
+
+}
+
+
+
+/**
+ * Authenticate user
+ */
+function AuthenticateStudent(e){
+  e.preventDefault();
+
+  $data = {
+    id:$(this).data("user-id"),
+    type:$(this).data('type'),
+    attendance:true
+  }
+
+  $.ajax({
+    method:"POST",
+    url:`${$SITE}functions/api.php`,
+    data:$data,
+    success:function($res){
+       console.log($res)
+    }
+  })
 
 }
